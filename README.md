@@ -1,23 +1,34 @@
-# golangci-lint-config
-Конфигурация golangci-lint, в которой включено как можно больше проверок.
+<h1> 🛠️ golangci-lint-config </h1>
+
+[[Русская версия]](README-ru.md)
+
+A golangci-lint configuration that enables as many checks as possible.
 
 
-# Зачем?
-- В репозитории golangci-lint нет конфига с максимальным числом включенных линтеров, а включение всех линтеров не включает все правила внутри каждого линтера (например gocritic и revive).
-- Более того, каждый линтер кроме отдельно включаемых правил имеет "настройки", которые тоже по умолчанию могут быть выключены.
+(This configuration is currently aligned with: golangci-lint v2.10.1)
+It should also work with newer versions of golangci-lint, but newer releases may introduce additional settings that are not yet enabled in this configuration.
+---
 
+## Why?
 
-## Что в конфиге
-- В этом конфиге по возможности включено максимальное число линтеров и правил линтеров
-- Для некоторых линтеров включены дополнительные настройки, например:
+* The `golangci-lint` repository doesn’t have a config that enables the maximum number of linters, and even enabling all linters still doesn’t enable all checks within each linter (for example, `gocritic` and `revive`).
+* Also, besides individually enabled rules, each linter has its own “settings,” and some of those are disabled by default as well.
+
+---
+## What’s in the config
+
+* This config enables the maximum possible number of linters and linter rules.
+* For some linters, it also turns on additional settings, for example:
+
 ```yaml
-            # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`.
-            # Such cases aren't reported by default.
-            # Default: false
-            check-blank: true
+# report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`.
+# Such cases aren't reported by default.
+# Default: false
+check-blank: true
 ```
-- всё же это opinionated конфиг и некоторые линтеры в нем отключены. Там где это сделано есть комментарий о причине отключения и можно легко его включить.
 
+* That said, it’s still an opinionated config, and some linters are disabled. Wherever that happens, there’s a comment explaining why, and you can easily enable them.
 
+---
 #### P.S.
-К сожалению мейнтейнер golangci-lint не хочет добавлять пример конфига со всеми дефолтными настройками и предлагает самостоятельно следить за changlog'ом, чтобы не пропустить новые правила и настройки
+Unfortunately, the `golangci-lint` maintainer doesn’t want to add an example config with all default settings, and suggests following the changelog yourself so you don’t miss new rules and settings.

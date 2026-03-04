@@ -1,120 +1,24 @@
-# supported golangci-lint version = 2.6.0
+# supported golangci-lint version = 2.10.1
 version: "2"
 linters:
-    default: none
-    enable:
-        - arangolint
-        - asasalint
-        - asciicheck
-        - bidichk
-        - bodyclose
-        - canonicalheader
-        - containedctx
-        - contextcheck
-        - copyloopvar
-        - cyclop
-        - decorder
-        #    - depguard # хороший способ запретить импорт чего-либо. Зависит от подхода к разработке.
-        - dogsled
-        #    - dupl # сплошные false positives
-        - dupword
-        - durationcheck
-        - embeddedstructfieldcheck
-        #    - err113 # Opinionated.
-        - errcheck
-        - errchkjson
-        - errname
-        - errorlint
-        - exhaustive
-        #    - exhaustruct # Зависит от подхода к разработке.
-        - exptostd
-        - fatcontext
-        - forbidigo
-        - forcetypeassert
-        - funcorder
-        #    - funlen # не лучшая метрика качества кода. Лучше в gocyclo, gocognit, maintidx. Например, табличные тесты всегда будут большими.
-        - ginkgolinter
-        - gocheckcompilerdirectives
-        #    - gochecknoglobals # не позволяет добавлять исключения (time.Date, regex.Must, etc). reassign с настройкой * частично решает проблему https://github.com/tommy-muehle/go-mnd/issues/14
-        - gochecknoinits
-        - gochecksumtype
-        - gocognit
-        - goconst
-        - gocritic
-        - gocyclo
-        #    - godoclint # Подходит скорее для библиотек
-        - godot
-        - godox
-        - goheader
-        - gomoddirectives
-        - gomodguard
-        - goprintffuncname
-        - gosec
-        - gosmopolitan
-        - govet
-        - grouper
-        - iface
-        - importas
-        - inamedparam
-        - ineffassign
-        - interfacebloat
-        #    - intrange # обычный трехкомпонентный for довольно стандартен, чтобы заставлять менять на for i := range n
-        - iotamixing
-        #    - ireturn # существуют ситуации, когда нужно возвращать интерфейсы: паттерн фабрика или какие-то внешние либы подразумевают это (ogen, otel)
-        #    - lll # редко актуальный при наличии большого экрана и включённом автоформатировании
-        - loggercheck
-        - maintidx
-        - makezero
-        - mirror
-        #    - mnd # не поддерживает игнор чисел по регулярному выражению. Нельзя исключить строки вида 5*time.Second
-        - misspell
-        - modernize
-        - musttag
-        - nakedret
-        - nestif
-        - nilerr
-        - nilnesserr
-        - nilnil
-        - nlreturn
-        - noctx
-        - noinlineerr
-        - nolintlint
-        #    - nonamedreturns # named returns делают код более явным
-        - nosprintfhostport
-        - paralleltest
-        #    - perfsprint # компромисс производительности и чистоты кода. Чаще лучше выбрать чистоту (легкость восприятия)
-        - prealloc
-        - predeclared
-        - promlinter
-        - protogetter
-        - reassign
-        - recvcheck
-        - revive
-        - rowserrcheck
-        - sloglint
-        - spancheck
-        - sqlclosecheck
-        - staticcheck
-        - tagalign
-        - tagliatelle
-        - testableexamples
-        - testifylint
-        #    - testpackage # Зависит от подхода к разработке.
-        - thelper
-        - tparallel
-        - unconvert
-        - unparam
-        - unqueryvet
-        - unused
-        - usestdlibvars
-        - usetesting
-        #    - varnamelen # Иногда сложно найти достойную замену однобуквенным именам. Как вариант _name, но тоже некрасиво.
-        - wastedassign
-        - whitespace
-        #    - wrapcheck # если обертка не через fmt.Errorf, линтер все равно ругается
-        #    - wsl # deprecated, но почему-то не удален из golangci-lint. Заменен wsl_v5
-        - wsl_v5
-        - zerologlint
+    default: all
+    disable:
+        - depguard # A good way to forbid importing certain packages. Depends on the development approach.
+        - dupl # Full of false positives
+        - err113 # Opinionated.
+        - exhaustruct # Depends on the development approach.
+        - funlen # Not the best code quality metric. Better use gocyclo, gocognit, maintidx. For example, table-driven tests will always be large.
+        - gochecknoglobals # Does not allow adding exceptions (time.Date, regex.Must, etc). reassign with * configuration partially solves the problem https://github.com/tommy-muehle/go-mnd/issues/14
+        - godoclint # More suitable for libraries
+        - ireturn # There are situations where returning interfaces is necessary: the factory pattern or some external libraries require it (ogen, otel)
+        - lll # Rarely relevant with a large screen and auto-formatting enabled
+        - mnd # Does not support ignoring numbers via regular expressions. Cannot exclude expressions like 5*time.Second
+        - nonamedreturns # named returns make the code more explicit in some cases (https://go.dev/doc/effective_go#named-results)
+        - perfsprint # A trade-off between performance and code clarity. In many cases clarity (readability) is preferable
+        - testpackage # Depends on the development approach.
+        - varnamelen # Sometimes it is hard to find a good replacement for single-letter names. One option is _name, but it also looks ugly.
+        - wrapcheck # If the wrapping is not done via fmt.Errorf, the linter still complains
+        - wsl # deprecated, but for some reason not removed from golangci-lint. Replaced by wsl_v5
 
     settings:
         cyclop:
@@ -139,7 +43,7 @@ linters:
             enable-all: true
             disable:
                 - fieldalignment
-                - shadow # Это не всегда ошибка
+                - shadow # It’s not always a mistake.
         prealloc:
             # Report pre-allocation suggestions on for loops.
             # Default: false
@@ -248,7 +152,7 @@ linters:
             checks:
                 - all
                 - -S1008
-                - -ST1003  # Poorly chosen identifier. Like camel_case
+                - -ST1003 # Poorly chosen identifier. Like camel_case
         tagliatelle:
             case:
                 rules:
@@ -277,7 +181,7 @@ formatters:
         - gofmt
         - gofumpt
         - goimports
-        #        - golines # сворачивает даже строки с функциями всего с одним аргументом
+        #        - golines # It even collapses lines with functions that have only one argument.
         - swaggo
     exclusions:
         generated: lax
