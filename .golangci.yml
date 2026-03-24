@@ -1,205 +1,251 @@
-# supported golangci-lint version = 2.10.1
+# supported golangci-lint version = 2.11.3
 version: "2"
 linters:
-    default: all
-    disable:
-        - depguard # A good way to forbid importing certain packages. Depends on the development approach.
-        - dupl # Full of false positives
-        - err113 # Opinionated.
-        - exhaustruct # Depends on the development approach.
-        - funlen # Not the best code quality metric. Better use gocyclo, gocognit, maintidx. For example, table-driven tests will always be large.
-        - gochecknoglobals # Does not allow adding exceptions (time.Date, regex.Must, etc). reassign with * configuration partially solves the problem https://github.com/tommy-muehle/go-mnd/issues/14
-        - godoclint # More suitable for libraries
-        - ireturn # There are situations where returning interfaces is necessary: the factory pattern or some external libraries require it (ogen, otel)
-        - lll # Rarely relevant with a large screen and auto-formatting enabled
-        - mnd # Does not support ignoring numbers via regular expressions. Cannot exclude expressions like 5*time.Second
-        - nonamedreturns # named returns make the code more explicit in some cases (https://go.dev/doc/effective_go#named-results)
-        - perfsprint # A trade-off between performance and code clarity. In many cases clarity (readability) is preferable
-        - testpackage # Depends on the development approach.
-        - varnamelen # Sometimes it is hard to find a good replacement for single-letter names. One option is _name, but it also looks ugly.
-        - wrapcheck # If the wrapping is not done via fmt.Errorf, the linter still complains
-        - wsl # deprecated, but for some reason not removed from golangci-lint. Replaced by wsl_v5
+  default: all
+  disable:
+    - depguard # A good way to forbid importing certain packages. Depends on the development approach.
+    - dupl # Full of false positives
+    - err113 # Opinionated.
+    - exhaustruct # Depends on the development approach.
+    - funlen # Not the best code quality metric. Better use gocyclo, gocognit, maintidx. For example, table-driven tests will always be large.
+    - gochecknoglobals # Does not allow adding exceptions (time.Date, regex.Must, etc). reassign with * configuration partially solves the problem https://github.com/tommy-muehle/go-mnd/issues/14
+    - godoclint # More suitable for libraries
+    - ireturn # There are situations where returning interfaces is necessary: the factory pattern or some external libraries require it (ogen, otel)
+    - lll # Rarely relevant with a large screen and auto-formatting enabled
+    - mnd # Does not support ignoring numbers via regular expressions. Cannot exclude expressions like 5*time.Second
+    - nonamedreturns # named returns make the code more explicit in some cases (https://go.dev/doc/effective_go#named-results)
+    - perfsprint # A trade-off between performance and code clarity. In many cases clarity (readability) is preferable
+    - testpackage # Depends on the development approach.
+    - varnamelen # Sometimes it is hard to find a good replacement for single-letter names. One option is _name, but it also looks ugly.
+    - wrapcheck # If the wrapping is not done via fmt.Errorf, the linter still complains
+    - wsl # deprecated, but for some reason not removed from golangci-lint. Replaced by wsl_v5
+    - nolintlint # buggy behavior. Deletes nolint directives when they are still used
 
-    settings:
-        cyclop:
-            # Default: 10
-            max-complexity: 15
-        gocritic:
-            enable-all: true
-            disabled-checks:
-                - hugeParam
-                - rangeValCopy
-                - importShadow
-        nestif:
-            min-complexity: 7
-        nolintlint:
-            allow-unused: false
-            require-explanation: true
-            require-specific: true
-        reassign:
-            patterns:
-                - .*
-        govet:
-            enable-all: true
-            disable:
-                - fieldalignment
-                - shadow # It’s not always a mistake.
-        prealloc:
-            # Report pre-allocation suggestions on for loops.
-            # Default: false
-            for-loops: true
-        nilnil:
-            # In addition, detect opposite situation (simultaneous return of non-nil error and valid value).
-            # E.g, `return clone, fh.indexer.Update(clone)` will be considered as invalid.
-            # Default: false
-            detect-opposite: true
-        revive:
-            enable-all-rules: true
-            rules:
-                - name: unexported-return
-                  disabled: true
-                - name: line-length-limit
-                  disabled: true
-                - name: add-constant
-                  disabled: true
-                - name: unhandled-error
-                  disabled: true
-                - name: comment-spacings
-                  disabled: true
-                - name: var-naming
-                  disabled: true
-                - name: nested-structs
-                  disabled: true
-                - name: max-public-structs
-                  disabled: true
-                - name: function-length
-                  disabled: true
-                - name: import-shadowing
-                  disabled: true
-                - name: import-alias-naming
-                  disabled: true
-                - name: empty-block
-                  disabled: true
-                - name: confusing-naming
-                  disabled: true
-                - name: exported
-                  disabled: true
-                - name: unused-receiver
-                  disabled: true
-                - name: indent-error-flow
-                  disabled: true
-                - name: early-return
-                  disabled: true
-                - name: use-any
-                  disabled: true
-                - name: argument-limit
-                  disabled: true
-                - name: cognitive-complexity
-                  disabled: true
-                - name: cyclomatic
-                  arguments:
-                      - 15
-                - name: confusing-naming
-                  disabled: true
-                - name: deep-exit
-                  disabled: true
-                - name: get-return
-                  disabled: true
-                - name: package-directory-mismatch
-                  disabled: true
-                - name: struct-tag # conflicts with validate user custom flags. Workaround: "validate,option1,option2"
-                  disabled: true
-        testifylint:
-            # Enable all checkers (https://github.com/Antonboom/testifylint#checkers).
-            # Default: false
-            enable-all: true
-        usestdlibvars:
-            # Suggest the use of time.Month in time.Date.
-            # Default: false
-            time-date-month: true
-            # Suggest the use of time.Month.String().
-            # Default: false
-            time-month: true
-            # Suggest the use of time.Layout.
-            # Default: false
-            time-layout: true
-            # Suggest the use of crypto.Hash.String().
-            # Default: false
-            crypto-hash: true
-            # Suggest the use of rpc.DefaultXXPath.
-            # Default: false
-            default-rpc-path: true
-            # Suggest the use of sql.LevelXX.String().
-            # Default: false
-            sql-isolation-level: true
-            # Suggest the use of tls.SignatureScheme.String().
-            # Default: false
-            tls-signature-scheme: true
-            # Suggest the use of constant.Kind.String().
-            # Default: false
-            constant-kind: true
-        errcheck:
-            # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
-            # Such cases aren't reported by default.
-            # Default: false
-            check-type-assertions: true
-            # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`.
-            # Such cases aren't reported by default.
-            # Default: false
-            check-blank: true
+  settings:
+    cyclop:
+      # Default: 10
+      max-complexity: 15
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - hugeParam
+        - rangeValCopy
+        - importShadow
+    gosec:
+      excludes:
+        - G705 # XSS via taint analysis # Can be handled by wrapping the response in JSON
+        - G117 # Potential exposure of secrets via JSON/YAML/XML/TOML marshaling
+        - G703 # Path traversal via taint analysis
+    nestif:
+      min-complexity: 7
+    nolintlint: # This linter can lead to flaky warnings https://github.com/golangci/golangci-lint/issues/3228
+      allow-unused: false
+      require-explanation: true
+      require-specific: true
+    reassign:
+      patterns:
+        - .*
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+        - shadow # It’s not always a mistake.
+    prealloc:
+      # Report pre-allocation suggestions on for loops.
+      # Default: false
+      for-loops: true
+    nilnil:
+      # In addition, detect opposite situation (simultaneous return of non-nil error and valid value).
+      # E.g, `return clone, fh.indexer.Update(clone)` will be considered as invalid.
+      # Default: false
+      detect-opposite: true
+    revive:
+      enable-all-rules: true
+      rules:
+        - name: unexported-return
+          disabled: true
 
-        staticcheck:
-            checks:
-                - all
-                - -S1008
-                - -ST1003 # Poorly chosen identifier. Like camel_case
-        tagliatelle:
-            case:
-                rules:
-                    avro: snake
-                    bson: snake
-                    env: snake
-                    envconfig: upperSnake
-                    json: snake
-                    mapstructure: snake
-                    toml: snake
-                    whatever: snake
-                    xml: snake
-                    yaml: snake
+        - name: line-length-limit
+          disabled: true
 
-        wsl_v5:
-            allow-first-in-block: false
+          # Can't be disabled for numbers exclusively (to work only with strings).
+          # For numbers, it triggers for any number like time.Date(2022,...) etc. A lot of false positives
+        - name: add-constant
+          disabled: true
 
-    exclusions:
-        presets:
-            - comments
-            - common-false-positives
+        - name: unhandled-error
+          arguments:
+            - "^fmt.Print.*"
+            - "strings.Builder.Write.*" # err is always nil
+            - "bytes.Buffer.Write.*" # err is always nil
+
+          # Enforces casing (orderId -> orderID, readJson -> readJSON, httpMethod -> HTTPMethod).
+          # Does not always improve readability and too noisy
+        - name: var-naming
+          disabled: true
+
+        - name: nested-structs
+          disabled: true
+
+        - name: max-public-structs
+          disabled: true
+
+        - name: function-length
+          disabled: true
+
+        - name: import-shadowing
+          disabled: true
+
+          # Enforces the use of specified case for import alias names
+        - name: import-alias-naming
+          arguments:
+            - allow-regex: "^([a-z][a-z0-9]*(_[a-z0-9]+)*)|([A-Z][A-Z0-9]*)$" # allowed: flatcase, SCREAMINGCASE and snake_case
+            # - allow-regex: "^[a-z][a-z0-9_]*$" # allowed: flatcase and snake_case
+            # - allow-regex: "^[a-z]+$" # allowed: only flatcase
+            # - allow-regex: "^[a-z]+(?:[A-Z][a-z0-9]+)*$" # allowed: flatcase and camelCase
+
+          # Triggers when a code block (if, for, switch, etc.) has no statements inside it (or only a comment).
+          # A comment can be left intentionally for explicitness and is not a problem.
+        - name: empty-block
+          disabled: true
+
+          # Triggers when package has functions like Do() and do() simultaneously.
+          # May not be an issue if the unexported function is only used internally and does not affect the public API.
+        - name: confusing-naming
+          disabled: true
+
+          # This warns on undocumented exported functions and methods.
+        - name: exported
+          disabled: true
+
+          # This rule warns on unused method receivers.
+        - name: unused-receiver
+          disabled: true
+
+          # Warns on "redundant" else blocks
+          # Sometimes they can be used for explicitness
+        - name: indent-error-flow
+          disabled: true
+
+        - name: early-return
+          disabled: true
+
+          # Limits the number of input arguments
+        - name: argument-limit
+          disabled: true
+
+        - name: cognitive-complexity
+          disabled: true
+
+        - name: cyclomatic
+          arguments:
+            - 15
+
+        - name: get-return
+          disabled: true
+
+          # conflicts with validate user custom flags. Workaround: "validate,option1,option2"
+        - name: struct-tag
+          disabled: true
+
+        - name: package-naming
+          arguments:
+            - convention-name-check-regex: "^([a-z][a-z0-9]*(_[a-z0-9]+)*)|([A-Z][A-Z0-9]*)$" # allow flatcase, SCREAMINGCASE, snake_case
+
+    testifylint:
+      # Enable all checkers (https://github.com/Antonboom/testifylint#checkers).
+      # Default: false
+      enable-all: true
+    usestdlibvars:
+      # Suggest the use of time.Month in time.Date.
+      # Default: false
+      time-date-month: true
+      # Suggest the use of time.Month.String().
+      # Default: false
+      time-month: true
+      # Suggest the use of time.Layout.
+      # Default: false
+      time-layout: true
+      # Suggest the use of crypto.Hash.String().
+      # Default: false
+      crypto-hash: true
+      # Suggest the use of rpc.DefaultXXPath.
+      # Default: false
+      default-rpc-path: true
+      # Suggest the use of sql.LevelXX.String().
+      # Default: false
+      sql-isolation-level: true
+      # Suggest the use of tls.SignatureScheme.String().
+      # Default: false
+      tls-signature-scheme: true
+      # Suggest the use of constant.Kind.String().
+      # Default: false
+      constant-kind: true
+    errcheck:
+      # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
+      # Such cases aren't reported by default.
+      # Default: false
+      check-type-assertions: true
+      # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`.
+      # Such cases aren't reported by default.
+      # Default: false
+      check-blank: true
+
+    staticcheck:
+      checks:
+        - all
+
+        # disable:
+        - -S1008
+        - -SA9003 # Empty body in an if or else branch # Branches with comments are also considered empty
+        - -ST1003 # Poorly chosen identifier. Like camel_case
+    tagliatelle:
+      case:
+        rules:
+          avro: snake
+          bson: snake
+          env: snake
+          envconfig: upperSnake
+          json: snake
+          mapstructure: snake
+          toml: snake
+          whatever: snake
+          xml: snake
+          yaml: snake
+
+    wsl_v5:
+      allow-first-in-block: false
+
+  exclusions:
+    presets:
+      - comments
+      - common-false-positives
 
 formatters:
-    enable:
-        - gci
-        - gofmt
-        - gofumpt
-        - goimports
-        #        - golines # It even collapses lines with functions that have only one argument.
-        - swaggo
-    exclusions:
-        generated: lax
-        paths:
-            - third_party$
-            - builtin$
-            - examples$
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    #        - golines # It even collapses lines with functions that have only one argument.
+    - swaggo
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 
 issues:
-    max-same-issues: 0
+  max-same-issues: 0
 
 run:
-    # The mode used to evaluate relative paths.
-    # It's used by exclusions, Go plugins, and some linters.
-    # The value can be:
-    # - `gomod`: the paths will be relative to the directory of the `go.mod` file.
-    # - `gitroot`: the paths will be relative to the git root (the parent directory of `.git`).
-    # - `cfg`: the paths will be relative to the configuration file.
-    # - `wd` (NOT recommended): the paths will be relative to the place where golangci-lint is run.
-    # Default: cfg
-    relative-path-mode: gomod
+  # The mode used to evaluate relative paths.
+  # It's used by exclusions, Go plugins, and some linters.
+  # The value can be:
+  # - `gomod`: the paths will be relative to the directory of the `go.mod` file.
+  # - `gitroot`: the paths will be relative to the git root (the parent directory of `.git`).
+  # - `cfg`: the paths will be relative to the configuration file.
+  # - `wd` (NOT recommended): the paths will be relative to the place where golangci-lint is run.
+  # Default: cfg
+  relative-path-mode: gomod
