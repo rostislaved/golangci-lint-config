@@ -3,7 +3,7 @@ Version history
 
 ### Version 1.1.0
 Changed:
-* golangci-lint: 2.10.1 → 2.11.3
+* golangci-lint: 2.10.1 → 2.11.4
 * Minor version now reflects golangci-lint updates, patch version - config-only changes
 * YAML formatting normalized
 * Extended comments for revive settings

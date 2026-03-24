@@ -1,4 +1,4 @@
-# supported golangci-lint version = 2.11.3
+# supported golangci-lint version = 2.11.4
 version: "2"
 linters:
   default: all
