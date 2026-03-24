@@ -1,6 +1,33 @@
 Version history
 ==============
 
+### Version 1.1.0
+Changed:
+* golangci-lint: 2.10.1 → 2.11.4
+* Minor version now reflects golangci-lint updates, patch version - config-only changes
+* YAML formatting normalized
+* Extended comments for revive settings
+
+Added:
+* revive:
+    * package-naming (flatcase, SCREAMINGCASE, snake_case) - enforces consistent package naming, allows common non-camel formats
+    * use-any - replaces interface{} with any
+    * comment-spacings - requires space after "//"
+    * unhandled-error (with exclusions) - enforces error handling, ignores known safe cases (fmt.Print*, bytes.Buffer.Write*, etc.)
+    * import-alias-naming (flatcase, snake_case) - enforces consistent alias style for imports
+    * deep-exit - detects hard exits (os.Exit, log.Fatal) inside functions
+    * intrange - suggests range-based loops where applicable
+
+Updated:
+* revive/unhandled-error exclusions (bytes.Buffer.Write.*)
+
+* Disabled:
+* nolintlint (unstable behavior)
+* gosec:
+    * G705 (XSS via taint) - acceptable when responses are properly encoded (e.g. JSON)
+    * G117 (secrets exposure via marshaling) - too noisy for typical use cases
+    * G703 (path traversal via taint) - requires manual validation instead
+
 ### Version 1.0.1
 Changed:
 * golangci-lint 2.6.0 → 2.10.1
