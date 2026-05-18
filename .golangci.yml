@@ -1,4 +1,4 @@
-# supported golangci-lint version = 2.11.4
+# supported golangci-lint version = 2.12.2
 version: "2"
 linters:
   default: all
@@ -18,47 +18,82 @@ linters:
     - testpackage # Depends on the development approach.
     - varnamelen # Sometimes it is hard to find a good replacement for single-letter names. One option is _name, but it also looks ugly.
     - wrapcheck # If the wrapping is not done via fmt.Errorf, the linter still complains
-    - wsl # deprecated, but for some reason not removed from golangci-lint. Replaced by wsl_v5
-    - nolintlint # buggy behavior. Deletes nolint directives when they are still used
+    - wsl # Deprecated. Linter kept because newer version has a new configuration format.
+    - gomodguard # Deprecated. Linter kept because newer version has a new configuration format.
+    - nolintlint # buggy behavior. Deletes nolint directives when they are still used (https://github.com/golangci/golangci-lint/issues/3228)
 
   settings:
     cyclop:
       # Default: 10
       max-complexity: 15
+
+    forbidigo:
+      analyze-types: true
+      forbid:
+        - pattern: ^print(ln)?$
+          msg: Do not commit print statements.
+
+        - pattern: ^fmt\.Print.*$
+          msg: Do not commit print statements.
+
+        - pattern: ^log.Fatal.*$
+          msg: Do not terminate process from business code
+
+        # Ban os.Exit; main.go is excluded in linters/exclusions/rules.
+        - pattern: ^os.Exit.*$
+          msg: Do not terminate process from business code (Allowed only in main.go)
+
+        # Ban panic in main.go; non-main files are excluded in linters/exclusions/rules.
+        - pattern: ^panic$
+          msg: panic() in main is forbidden. Use os.Exit(1) instead
+
     gocritic:
       enable-all: true
       disabled-checks:
         - hugeParam
         - rangeValCopy
         - importShadow
+
     gosec:
       excludes:
         - G705 # XSS via taint analysis # Can be handled by wrapping the response in JSON
         - G117 # Potential exposure of secrets via JSON/YAML/XML/TOML marshaling
         - G703 # Path traversal via taint analysis
+
     nestif:
       min-complexity: 7
+
     nolintlint: # This linter can lead to flaky warnings https://github.com/golangci/golangci-lint/issues/3228
       allow-unused: false
       require-explanation: true
       require-specific: true
+
     reassign:
       patterns:
         - .*
+
     govet:
       enable-all: true
       disable:
         - fieldalignment
         - shadow # It’s not always a mistake.
-    prealloc:
-      # Report pre-allocation suggestions on for loops.
+
+    makezero:
+      # Allow only slices initialized with a length of zero.
       # Default: false
-      for-loops: true
+      always: true # It encourages safer and more idiomatic slice construction by avoiding manual index management.
+
     nilnil:
       # In addition, detect opposite situation (simultaneous return of non-nil error and valid value).
       # E.g, `return clone, fh.indexer.Update(clone)` will be considered as invalid.
       # Default: false
       detect-opposite: true
+
+    prealloc:
+      # Report pre-allocation suggestions on for loops.
+      # Default: false
+      for-loops: true
+
     revive:
       enable-all-rules: true
       rules:
@@ -99,8 +134,8 @@ linters:
           # Enforces the use of specified case for import alias names
         - name: import-alias-naming
           arguments:
-            - allow-regex: "^([a-z][a-z0-9]*(_[a-z0-9]+)*)|([A-Z][A-Z0-9]*)$" # allowed: flatcase, SCREAMINGCASE and snake_case
-            # - allow-regex: "^[a-z][a-z0-9_]*$" # allowed: flatcase and snake_case
+            # - allow-regex: "^([a-z][a-z0-9]*(_[a-z0-9]+)*)|([A-Z][A-Z0-9]*)$" # allowed: flatcase, SCREAMINGCASE and snake_case
+            - allow-regex: "^[a-z][a-z0-9_]*$" # allowed: flatcase and snake_case
             # - allow-regex: "^[a-z]+$" # allowed: only flatcase
             # - allow-regex: "^[a-z]+(?:[A-Z][a-z0-9]+)*$" # allowed: flatcase and camelCase
 
@@ -150,12 +185,13 @@ linters:
 
         - name: package-naming
           arguments:
-            - convention-name-check-regex: "^([a-z][a-z0-9]*(_[a-z0-9]+)*)|([A-Z][A-Z0-9]*)$" # allow flatcase, SCREAMINGCASE, snake_case
+            - convention-name-check-regex: "^[a-z][a-z0-9_]*$" # allow flatcase, snake_case
 
     testifylint:
       # Enable all checkers (https://github.com/Antonboom/testifylint#checkers).
       # Default: false
       enable-all: true
+
     usestdlibvars:
       # Suggest the use of time.Month in time.Date.
       # Default: false
@@ -181,6 +217,7 @@ linters:
       # Suggest the use of constant.Kind.String().
       # Default: false
       constant-kind: true
+
     errcheck:
       # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
       # Such cases aren't reported by default.
@@ -199,6 +236,7 @@ linters:
         - -S1008
         - -SA9003 # Empty body in an if or else branch # Branches with comments are also considered empty
         - -ST1003 # Poorly chosen identifier. Like camel_case
+
     tagliatelle:
       case:
         rules:
@@ -215,11 +253,29 @@ linters:
 
     wsl_v5:
       allow-first-in-block: false
+      default: "all"
+      disable:
+        - after-expr
+        - assign-exclusive
+        - assign-expr
 
   exclusions:
     presets:
       - comments
       - common-false-positives
+
+    rules:
+      # Allow os.Exit in main.go.
+      - path: '(^|.*/)main\.go$'
+        text: 'Do not terminate process from business code \(Allowed only in main\.go\)'
+        linters:
+          - forbidigo
+
+      # Exclude non-main files from the panic ban.
+      - path-except: '(^|.*/)main\.go$'
+        linters:
+          - forbidigo
+        text: 'panic\(\) in main is forbidden\. Use os\.Exit\(1\) instead'
 
 formatters:
   enable:
@@ -227,16 +283,34 @@ formatters:
     - gofmt
     - gofumpt
     - goimports
-    #        - golines # It even collapses lines with functions that have only one argument.
-    - swaggo
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+  #  - golines # Unfortunately, it can't be disabled on a per-path basis. https://github.com/golangci/golangci-lint/issues/5625
+  #  - swaggo
+  settings:
+    gci:
+      # Section configuration to compare against.
+      # Section names are case-insensitive and may contain parameters in ().
+      # The default order of sections is `standard > default > custom > blank > dot > alias > localmodule`.
+      # If `custom-order` is `true`, it follows the order of `sections` option.
+      # Default: ["standard", "default"]
+      sections:
+        - standard # Standard section: captures all standard packages.
+        - blank # Blank section: contains all blank imports. This section is not present unless explicitly enabled.
+        - dot # Dot section: contains all dot imports. This section is not present unless explicitly enabled.
+        #- alias # Alias section: contains all alias imports. This section is not present unless explicitly enabled.
+        - default # Default section: contains all imports that could not be matched to another section type.
+        - prefix(github.com) # Custom section: groups all imports with the specified Prefix.
+        - localmodule # Local module section: contains all local packages. This section is not present unless explicitly enabled.
+      custom-order: true
+
+    gofumpt:
+      # Choose whether to use the extra rules.
+      # Default: false
+      extra-rules: true
 
 issues:
+  # Maximum count of issues with the same text.
+  # Set to 0 to disable.
+  # Default: 3
   max-same-issues: 0
 
 run:

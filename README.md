@@ -5,7 +5,7 @@
 A golangci-lint configuration that enables as many checks as possible.
 
 ---
-This configuration is currently aligned with: golangci-lint v2.10.4
+This configuration is currently aligned with: golangci-lint v2.12.2
 
 It should also work with newer versions of golangci-lint, but newer releases may introduce additional settings that are not yet enabled in this configuration.
 
@@ -33,4 +33,4 @@ check-blank: true
 
 ---
 #### P.S.
-Unfortunately, the `golangci-lint` maintainer doesn’t want to add an example config with all default settings, and suggests following the changelog yourself so you don’t miss new rules and settings.
+Unfortunately, the `golangci-lint` repository doesn’t provide an example config with all default settings, and suggests following the changelog yourself so you don’t miss new rules and settings.

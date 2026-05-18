@@ -1,6 +1,17 @@
 Version history
 ==============
 
+### Version 1.2.0
+Changed:
+* golangci-lint: 2.11.4 → 2.12.2
+* makezero: enforces using append (and not c-style for loops)
+* forbidigo: restrict fmt.Print\println and log.Fatal everywhere, but panic only in main and os.Exit everywhere except main
+* wsl_v5: add rules: after-block, after-decl, after-defer, after-go, cuddle-group
+* revive: import-alias-naming and package-naming don't allow SCREAMING_CASE now
+* formatters/gofumpt: enable extra-rules
+* formatters/gci: imports now are grouped in sections 
+* formatters/swaggo: disabled
+
 ### Version 1.1.0
 Changed:
 * golangci-lint: 2.10.1 → 2.11.4
