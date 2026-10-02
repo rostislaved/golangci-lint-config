@@ -1,6 +1,14 @@
 Version history
 ==============
 
+### Version 1.3.0
+Changed:
+* golangci-lint: 2.12.2 -> 2.14.0
+* nolintlint: enabled after the unused-directive bug was fixed (https://github.com/golangci/golangci-lint/pull/6810)
+* exhaustruct_v5: disabled, consistent with exhaustruct
+* iface: enable identical and opaque; keep unused and unusedmethod disabled pending upstream fixes
+* formatters/gofumpt: replace deprecated extra-rules with extra/group-params, extra/clothe-returns and extra/balance-calls
+
 ### Version 1.2.0
 Changed:
 * golangci-lint: 2.11.4 → 2.12.2

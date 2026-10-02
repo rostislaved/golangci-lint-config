@@ -5,7 +5,7 @@
 A golangci-lint configuration that enables as many checks as possible.
 
 ---
-This configuration is currently aligned with: golangci-lint v2.12.2
+This configuration is currently aligned with: golangci-lint v2.14.0
 
 It should also work with future versions of golangci-lint, but new releases may introduce additional settings that are not yet enabled in this configuration.
 
