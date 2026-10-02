@@ -1,4 +1,4 @@
-# supported golangci-lint version = 2.12.2
+# supported golangci-lint version = 2.14.0
 version: "2"
 linters:
   default: all
@@ -7,6 +7,7 @@ linters:
     - dupl # Full of false positives
     - err113 # Opinionated.
     - exhaustruct # Depends on the development approach.
+    - exhaustruct_v5 # Depends on the development approach.
     - funlen # Not the best code quality metric. Better use gocyclo, gocognit, maintidx. For example, table-driven tests will always be large.
     - gochecknoglobals # Does not allow adding exceptions (time.Date, regex.Must, etc). reassign with * configuration partially solves the problem https://github.com/tommy-muehle/go-mnd/issues/14
     - godoclint # More suitable for libraries
@@ -20,7 +21,6 @@ linters:
     - wrapcheck # If the wrapping is not done via fmt.Errorf, the linter still complains
     - wsl # Deprecated. Linter kept because newer version has a new configuration format.
     - gomodguard # Deprecated. Linter kept because newer version has a new configuration format.
-    - nolintlint # buggy behavior. Deletes nolint directives when they are still used (https://github.com/golangci/golangci-lint/issues/3228)
 
   settings:
     cyclop:
@@ -60,10 +60,24 @@ linters:
         - G117 # Potential exposure of secrets via JSON/YAML/XML/TOML marshaling
         - G703 # Path traversal via taint analysis
 
+    iface:
+      # List of analyzers to enable.
+      # Default: ["identical"]
+      enable:
+        - identical # Identifies interfaces in the same package that have identical method sets.
+
+        # disabled before fix: https://github.com/uudashr/iface/issues/60
+        #        - unused # Identifies interfaces that are not used anywhere in the same package where the interface is defined.
+
+        - opaque # Identifies functions that return interfaces, but the actual returned value is always a single concrete implementation.
+
+        # disabled before fix: https://github.com/uudashr/iface/issues/61
+        #        - unusedmethod # Detects interface methods that are never used anywhere in the same package where they are defined.
+
     nestif:
       min-complexity: 7
 
-    nolintlint: # This linter can lead to flaky warnings https://github.com/golangci/golangci-lint/issues/3228
+    nolintlint:
       allow-unused: false
       require-explanation: true
       require-specific: true
@@ -305,7 +319,16 @@ formatters:
     gofumpt:
       # Choose whether to use the extra rules.
       # Default: false
-      extra-rules: true
+      extra:
+        # Groups function parameters with repeated types.
+        # Default: false
+        group-params: true
+        # Clothes naked returns in functions with named results.
+        # Default: false
+        clothe-returns: true
+        # Multi-line function calls with the opening parenthesis at the end of a line should place the closing parenthesis at the start of a line.
+        # Default: false
+        balance-calls: true
 
 issues:
   # Maximum count of issues with the same text.
